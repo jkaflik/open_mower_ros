@@ -64,6 +64,7 @@ actionlib::SimpleActionClient<mbf_msgs::ExePathAction> *mbfClientExePath;
 ros::Publisher cmd_vel_pub, high_level_state_publisher;
 mower_logic::MowerLogicConfig last_config;
 
+ros::Publisher actions_pub;
 
 // store some values for safety checks
 ros::Time pose_time(0.0);
@@ -140,6 +141,8 @@ void registerActions(std::string prefix, const std::vector<xbot_msgs::ActionInfo
         ROS_ERROR_STREAM("Error registering actions for " << prefix << ". Retrying.");
         retry_delay.sleep();
     }
+
+    actions_pub.publish(srv.request);
 }
 
 void setRobotPose(geometry_msgs::Pose &pose) {
@@ -558,6 +561,7 @@ int main(int argc, char **argv) {
     reconfigServer->setCallback(reconfigureCB);
 
     cmd_vel_pub = n->advertise<geometry_msgs::Twist>("/logic_vel", 1);
+    actions_pub = n->advertise<xbot_msgs::RegisterActionsSrvRequest>("/mower_logic/actions", 1, true);
 
     ros::Publisher path_pub;
 
