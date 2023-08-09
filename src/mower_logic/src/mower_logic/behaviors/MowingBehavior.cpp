@@ -123,7 +123,7 @@ void MowingBehavior::update_actions() {
     actions[0].enabled = !paused &&  !requested_pause_flag;
     actions[1].enabled = paused && !requested_continue_flag;
 
-    registerActions("mower_logic:mowing", actions);
+    registerActions("mowing", actions);
 }
 
 bool MowingBehavior::create_mowing_plan(int area_index) {

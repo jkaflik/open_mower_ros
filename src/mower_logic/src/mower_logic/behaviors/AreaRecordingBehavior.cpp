@@ -200,7 +200,7 @@ void AreaRecordingBehavior::exit() {
     for(auto& a : actions) {
         a.enabled = false;
     }
-    registerActions("mower_logic:area_recording", actions);
+    registerActions("area_recording", actions);
 
     map_overlay_pub.shutdown();
     marker_pub.shutdown();
