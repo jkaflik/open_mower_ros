@@ -127,22 +127,44 @@ xbot_msgs::AbsolutePose getPose() {
 
 void setEmergencyMode(bool emergency);
 
-void registerActions(std::string prefix, const std::vector<xbot_msgs::ActionInfo> &actions) {
+void registerXBotActions(const std::string &behavior, const std::vector<mower_logic::Action> &actions);
+
+void registerActions(std::string behavior, const std::vector<mower_logic::Action> &actions) {
+    mower_logic::BehaviorActions msg;
+    msg.behavior = behavior;
+    msg.actions = actions;
+
+    actions_pub.publish(msg);
+
+    // backward compatibility for xbot_msgs::RegisterActionsSrv
+    registerXBotActions(behavior, actions);
+}
+
+void registerXBotActions(const std::string &behavior, const std::vector<mower_logic::Action> &actions) {
+    auto prefix = "mower_logic:" + behavior;
+
+    std::vector<xbot_msgs::ActionInfo> xbotActions;
+    for(auto &action : actions) {
+        xbot_msgs::ActionInfo xbotAction;
+        xbotAction.action_id = action.action_id;
+        xbotAction.action_name = action.action_name;
+        xbotAction.enabled = action.enabled;
+        xbotActions.push_back(xbotAction);
+    }
+
     xbot_msgs::RegisterActionsSrv srv;
     srv.request.node_prefix = prefix;
-    srv.request.actions = actions;
+    srv.request.actions = xbotActions;
 
     ros::Rate retry_delay(1);
     for(int i = 0; i < 10; i++) {
         if(actionRegistrationClient.call(srv)) {
-            ROS_INFO_STREAM("successfully registered actions for " << prefix);
+            ROS_INFO_STREAM("successfully registered actions for " << behavior);
             break;
         }
-        ROS_ERROR_STREAM("Error registering actions for " << prefix << ". Retrying.");
+        ROS_ERROR_STREAM("Error registering actions for " << behavior << ". Retrying.");
         retry_delay.sleep();
     }
-
-    actions_pub.publish(srv.request);
 }
 
 void setRobotPose(geometry_msgs::Pose &pose) {

@@ -38,7 +38,7 @@
 #include "mower_map/SetDockingPointSrv.h"
 #include "mower_msgs/EmergencyStopSrv.h"
 #include "xbot_msgs/AbsolutePose.h"
-#include "xbot_msgs/ActionInfo.h"
+#include "mower_logic/Action.h"
 
 #include "geometry_msgs/Twist.h"
 
@@ -57,7 +57,7 @@ private:
 
     bool has_odom = false;
 
-    std::vector<xbot_msgs::ActionInfo> actions;
+    std::vector<mower_logic::Action> actions;
 
     sensor_msgs::Joy last_joy;
     xbot_msgs::AbsolutePose last_pose;

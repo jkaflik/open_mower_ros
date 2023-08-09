@@ -21,7 +21,7 @@ extern ros::ServiceClient emergencyClient;
 extern actionlib::SimpleActionClient<mbf_msgs::MoveBaseAction> *mbfClient;
 extern actionlib::SimpleActionClient<mbf_msgs::ExePathAction> *mbfClientExePath;
 extern ros::NodeHandle *n;
-extern void registerActions(std::string prefix, const std::vector<xbot_msgs::ActionInfo> &actions);
+extern void registerActions(std::string behavior, const std::vector<mower_logic::Action> &actions);
 
 extern void stop();
 
@@ -29,13 +29,9 @@ extern bool setGPS(bool enabled);
 
 AreaRecordingBehavior AreaRecordingBehavior::INSTANCE;
 
-
 std::string AreaRecordingBehavior::state_name() {
     return "AREA_RECORDING";
 }
-
-
-
 
 Behavior *AreaRecordingBehavior::execute() {
     setGPS(true);
@@ -609,52 +605,52 @@ void AreaRecordingBehavior::handle_action(std::string action) {
 }
 
 AreaRecordingBehavior::AreaRecordingBehavior() {
-    xbot_msgs::ActionInfo start_recording_action;
+    mower_logic::Action start_recording_action;
     start_recording_action.action_id = "start_recording";
     start_recording_action.enabled = false;
     start_recording_action.action_name = "Start Recording";
 
-    xbot_msgs::ActionInfo stop_recording_action;
+    mower_logic::Action stop_recording_action;
     stop_recording_action.action_id = "stop_recording";
     stop_recording_action.enabled = false;
     stop_recording_action.action_name = "Stop Recording";
 
-    xbot_msgs::ActionInfo finish_navigation_area_action;
+    mower_logic::Action finish_navigation_area_action;
     finish_navigation_area_action.action_id = "finish_navigation_area";
     finish_navigation_area_action.enabled = false;
     finish_navigation_area_action.action_name = "Save Navigation Area";
 
-    xbot_msgs::ActionInfo finish_mowing_area_action;
+    mower_logic::Action finish_mowing_area_action;
     finish_mowing_area_action.action_id = "finish_mowing_area";
     finish_mowing_area_action.enabled = false;
     finish_mowing_area_action.action_name = "Save Mowing Area";
 
-    xbot_msgs::ActionInfo exit_recording_mode_action;
+    mower_logic::Action exit_recording_mode_action;
     exit_recording_mode_action.action_id = "exit_recording_mode";
     exit_recording_mode_action.enabled = false;
     exit_recording_mode_action.action_name = "Exit";
 
-    xbot_msgs::ActionInfo finish_discard_action;
+    mower_logic::Action finish_discard_action;
     finish_discard_action.action_id = "finish_discard";
     finish_discard_action.enabled = false;
     finish_discard_action.action_name = "Discard Area";
 
-    xbot_msgs::ActionInfo record_dock_action;
+    mower_logic::Action record_dock_action;
     record_dock_action.action_id = "record_dock";
     record_dock_action.enabled = false;
     record_dock_action.action_name = "Record Docking point";
 
-    xbot_msgs::ActionInfo auto_point_collecting_enable_action;
+    mower_logic::Action auto_point_collecting_enable_action;
     auto_point_collecting_enable_action.action_id = "auto_point_collecting_enable";
     auto_point_collecting_enable_action.enabled = false;
     auto_point_collecting_enable_action.action_name = "Enable automatic point collecting";
 
-    xbot_msgs::ActionInfo auto_point_collecting_disable_action;
+    mower_logic::Action auto_point_collecting_disable_action;
     auto_point_collecting_disable_action.action_id = "auto_point_collecting_disable";
     auto_point_collecting_disable_action.enabled = false;
     auto_point_collecting_disable_action.action_name = "Disable automatic point collecting";
 
-    xbot_msgs::ActionInfo collect_point_action;
+    mower_logic::Action collect_point_action;
     collect_point_action.action_id = "collect_point";
     collect_point_action.enabled = false;
     collect_point_action.action_name = "Collect point";
@@ -710,7 +706,7 @@ void AreaRecordingBehavior::update_actions() {
 
         actions[9].enabled = auto_point_collecting;
 
-        registerActions("mower_logic:area_recording", actions);
+        registerActions("area_recording", actions);
     }
 }
 

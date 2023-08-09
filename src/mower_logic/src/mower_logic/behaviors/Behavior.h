@@ -18,6 +18,7 @@
 #define SRC_BEHAVIOR_H
 
 #include "ros/ros.h"
+#include "mower_logic/BehaviorActions.h"
 #include "mower_logic/MowerLogicConfig.h"
 #include "mower_msgs/HighLevelStatus.h"
 #include <atomic>

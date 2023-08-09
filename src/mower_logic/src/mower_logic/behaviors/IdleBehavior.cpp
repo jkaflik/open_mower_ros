@@ -21,7 +21,7 @@ extern void stopBlade();
 extern void setEmergencyMode(bool emergency);
 extern void setGPS(bool enabled);
 extern void setRobotPose(geometry_msgs::Pose &pose);
-extern void registerActions(std::string prefix, const std::vector<xbot_msgs::ActionInfo> &actions);
+extern void registerActions(std::string behavior, const std::vector<mower_logic::Action> &actions);
 
 extern ros::ServiceClient dockingPointClient;
 extern mower_msgs::Status getStatus();
@@ -112,14 +112,14 @@ void IdleBehavior::enter() {
     for(auto& a : actions) {
         a.enabled = true;
     }
-    registerActions("mower_logic:idle", actions);
+    registerActions("idle", actions);
 }
 
 void IdleBehavior::exit() {
     for(auto& a : actions) {
         a.enabled = false;
     }
-    registerActions("mower_logic:idle", actions);
+    registerActions("idle", actions);
 }
 
 void IdleBehavior::reset() {
@@ -166,12 +166,12 @@ uint8_t IdleBehavior::get_state() {
 
 
 IdleBehavior::IdleBehavior() {
-    xbot_msgs::ActionInfo start_mowing_action;
+    mower_logic::Action start_mowing_action;
     start_mowing_action.action_id = "start_mowing";
     start_mowing_action.enabled = false;
     start_mowing_action.action_name = "Start Mowing";
 
-    xbot_msgs::ActionInfo start_area_recording_action;
+    mower_logic::Action start_area_recording_action;
     start_area_recording_action.action_id = "start_area_recording";
     start_area_recording_action.enabled = false;
     start_area_recording_action.action_name = "Start Area Recording";

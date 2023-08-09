@@ -31,7 +31,7 @@ extern actionlib::SimpleActionClient<mbf_msgs::ExePathAction> *mbfClientExePath;
 extern mower_logic::MowerLogicConfig getConfig();
 extern void setConfig(mower_logic::MowerLogicConfig);
 
-extern void registerActions(std::string prefix, const std::vector<xbot_msgs::ActionInfo> &actions);
+extern void registerActions(std::string behavior, const std::vector<mower_logic::Action> &actions);
 
 MowingBehavior MowingBehavior::INSTANCE;
 
@@ -78,14 +78,14 @@ void MowingBehavior::enter() {
     for(auto& a : actions) {
         a.enabled = true;
     }
-    registerActions("mower_logic:mowing", actions);
+    registerActions("mowing", actions);
 }
 
 void MowingBehavior::exit() {
     for(auto& a : actions) {
         a.enabled = false;
     }
-    registerActions("mower_logic:mowing", actions);
+    registerActions("mowing", actions);
 }
 
 void MowingBehavior::reset() {
@@ -469,22 +469,22 @@ uint8_t MowingBehavior::get_state() {
 }
 
 MowingBehavior::MowingBehavior() {
-    xbot_msgs::ActionInfo pause_action;
+    mower_logic::Action pause_action;
     pause_action.action_id = "pause";
     pause_action.enabled = false;
     pause_action.action_name = "Pause Mowing";
 
-    xbot_msgs::ActionInfo continue_action;
+    mower_logic::Action continue_action;
     continue_action.action_id = "continue";
     continue_action.enabled = false;
     continue_action.action_name = "Continue Mowing";
 
-    xbot_msgs::ActionInfo abort_mowing_action;
+    mower_logic::Action abort_mowing_action;
     abort_mowing_action.action_id = "abort_mowing";
     abort_mowing_action.enabled = false;
     abort_mowing_action.action_name = "Stop Mowing";
 
-    xbot_msgs::ActionInfo skip_area_action;
+    mower_logic::Action skip_area_action;
     skip_area_action.action_id = "skip_area";
     skip_area_action.enabled = false;
     skip_area_action.action_name = "Skip Area";

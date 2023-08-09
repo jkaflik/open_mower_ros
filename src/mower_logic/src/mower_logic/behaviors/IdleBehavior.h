@@ -23,13 +23,12 @@
 #include "mower_map/GetMowingAreaSrv.h"
 #include "AreaRecordingBehavior.h"
 #include <mower_map/GetDockingPointSrv.h>
-#include "xbot_msgs/ActionInfo.h"
 
 class IdleBehavior : public Behavior {
 private:
     bool manual_start_mowing = false;
     bool start_area_recorder = false;
-    std::vector<xbot_msgs::ActionInfo> actions;
+    std::vector<mower_logic::Action> actions;
 
 public:
     IdleBehavior();
