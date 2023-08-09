@@ -38,6 +38,7 @@ private:
     bool mowerEnabled = false;
     std::vector<slic3r_coverage_planner::Path> currentMowingPaths;
 
+    std::string subStateName;
 
 public:
     MowingBehavior();
@@ -45,6 +46,8 @@ public:
     static MowingBehavior INSTANCE;
 
     std::string state_name() override;
+
+    std::string sub_state_name() override;
 
     Behavior *execute() override;
 

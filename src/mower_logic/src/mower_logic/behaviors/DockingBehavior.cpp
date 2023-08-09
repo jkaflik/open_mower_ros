@@ -173,6 +173,14 @@ std::string DockingBehavior::state_name() {
     return "DOCKING";
 }
 
+std::string DockingBehavior::sub_state_name() {
+    if (!isGPSGood) {
+        return "waiting for gps";
+    }
+
+    return "";
+}
+
 Behavior *DockingBehavior::execute() {
 
     // Check if already docked (e.g. carried to base during emergency) and skip
@@ -290,4 +298,3 @@ uint8_t DockingBehavior::get_state() {
 void DockingBehavior::handle_action(std::string action) {
 
 }
-

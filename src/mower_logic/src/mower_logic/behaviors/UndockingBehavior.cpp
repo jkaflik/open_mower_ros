@@ -33,6 +33,14 @@ std::string UndockingBehavior::state_name() {
     return "UNDOCKING";
 }
 
+std::string UndockingBehavior::sub_state_name() {
+    if (!isGPSGood) {
+        return "waiting for gps";
+    }
+
+    return "";
+}
+
 Behavior *UndockingBehavior::execute() {
 
     // get robot's current pose from odometry.

@@ -38,6 +38,16 @@ std::string IdleBehavior::state_name() {
     return "IDLE";
 }
 
+std::string IdleBehavior::sub_state_name() {
+    const auto last_status = getStatus();
+
+    if (last_status.v_charge > 5.0) {
+        return "charging";
+    }
+    
+    return "";
+}
+
 Behavior *IdleBehavior::execute() {
 
 
