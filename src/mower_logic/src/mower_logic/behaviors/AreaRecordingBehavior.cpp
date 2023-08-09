@@ -602,6 +602,8 @@ void AreaRecordingBehavior::handle_action(std::string action) {
         ROS_INFO_STREAM("Got collect point");
         collect_point = true;
     }
+
+    update_actions();
 }
 
 AreaRecordingBehavior::AreaRecordingBehavior() {
@@ -688,6 +690,7 @@ void AreaRecordingBehavior::update_actions() {
             // enable/disable auto point collecting
             actions[7].enabled = !auto_point_collecting;
             actions[8].enabled = auto_point_collecting;
+            actions[9].enabled = !auto_point_collecting;
         } else {
             // neither recording a polygon nor docking point. we can save if we have an outline and always discard
             if(has_outline) {
@@ -703,8 +706,6 @@ void AreaRecordingBehavior::update_actions() {
                 actions[6].enabled = true;
             }
         }
-
-        actions[9].enabled = auto_point_collecting;
 
         registerActions("area_recording", actions);
     }
