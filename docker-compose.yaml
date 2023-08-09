@@ -1,0 +1,45 @@
+version: "2.3"
+
+services:
+  rosmaster:
+    container_name: rosmaster
+    image: ros:noetic
+    command: roscore
+    ports:
+      - "11311:11311"
+
+  sandbox:
+    container_name: clion_remote_env
+    build:
+      context: ./
+      dockerfile: ./docker/sandbox.Dockerfile
+    tty: true
+    cap_add:
+      - SYS_PTRACE  # For debugging purposes
+    volumes:
+      - ./src:/opt/open_mower_ros/src
+    ports:
+      - "2222:22"
+    depends_on:
+      - rosmaster
+
+#  simulation:
+#    container_name: simulation_env
+#    build:
+#      context: ./docker
+#      dockerfile: simulation.Dockerfile
+#    runtime: nvidia
+#    tty: true
+#    environment:
+#      DISPLAY: ${DISPLAY}
+#      QT_X11_NO_MITSHM: 1
+#      XAUTHORITY: /tmp/.docker.xauth
+#      ROS_MASTER_URI: http://rosmaster:11311
+#    volumes:
+#      - ./src:/catkin_ws/src
+#      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+#      - /tmp/.docker.xauth:/tmp/.docker.xauth
+#    ports:
+#      - "11345:11345"
+#    depends_on:
+#      - rosmaster
