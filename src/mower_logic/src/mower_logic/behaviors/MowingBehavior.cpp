@@ -136,6 +136,8 @@ bool MowingBehavior::create_mowing_plan(int area_index) {
     ROS_INFO_STREAM("MowingBehavior: Creating mowing plan for area: " << area_index);
     // Delete old plan and progress.
     currentMowingPaths.clear();
+    currentMowingPathsProgress = 0;
+    currentMowingPathsLength = 0;
 
     // get the mowing area
     mower_map::GetMowingAreaSrv mapSrv;
@@ -187,6 +189,12 @@ bool MowingBehavior::create_mowing_plan(int area_index) {
     }
 
     currentMowingPaths = pathSrv.response.paths;
+
+    // calculate currentMowingPaths length
+    currentMowingPathsLength = 0;
+    for(auto& path : currentMowingPaths) {
+        currentMowingPathsLength += path.path.poses.size();
+    }
 
     return true;
 }
@@ -391,7 +399,7 @@ bool MowingBehavior::execute_mowing_plan() {
                     // show progress
                     ROS_INFO_STREAM_THROTTLE(5, "MowingBehavior: (MOW) Progress: " << getCurrentMowPathIndex() << "/" << path.path.poses.size());
 
-                    int progress = (int)round((getCurrentMowPathIndex() / (float)path.path.poses.size()) * 100);
+                    int progress = (int)round((currentMowingPathsProgress + getCurrentMowPathIndex() / (float)path.path.poses.size()) * 100);
                     subStateName = std::to_string(progress) + "%";
                 } else {
                     ROS_INFO_STREAM("MowingBehavior: (MOW)  Got status " << current_status.state_ << " from MBF/FTCPlanner -> Stopping path execution.");
@@ -408,15 +416,20 @@ bool MowingBehavior::execute_mowing_plan() {
                 int currentIndex = getCurrentMowPathIndex();
                 ROS_INFO_STREAM(">> MowingBehavior: (MOW) PlannerGetProgress currentIndex = " << currentIndex << " of " << path.path.poses.size());
                 printNavState(current_status.state_);
+
+                auto posesSize = path.path.poses.size();
+
                 // if we have fully processed the segment or we have encountered an error, drop the path segment
                 /* TODO: we can not trust the SUCCEEDED state because the planner sometimes says suceeded with
                     the currentIndex far from the size of the poses ! (BUG in planner ?)
                     instead we trust only the currentIndex vs. poses.size() */
-                if (currentIndex >= path.path.poses.size() || (path.path.poses.size() - currentIndex) < 5) // fully mowed the path ?
+                if (currentIndex >= posesSize || (posesSize - currentIndex) < 5) // fully mowed the path ?
                 {
                     ROS_INFO_STREAM("MowingBehavior: (MOW) Mow path finished, skipping to next mow path.");
                     currentMowingPaths.erase(currentMowingPaths.begin());
                     // continue with next segment
+
+                    currentMowingPathsProgress += posesSize;
                 }
                 else
                 {

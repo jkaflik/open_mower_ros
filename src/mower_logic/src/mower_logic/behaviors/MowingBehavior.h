@@ -37,6 +37,8 @@ private:
     // Progress
     bool mowerEnabled = false;
     std::vector<slic3r_coverage_planner::Path> currentMowingPaths;
+    unsigned int currentMowingPathsLength = 0;
+    unsigned int currentMowingPathsProgress = 0;
 
     std::string subStateName;
 
