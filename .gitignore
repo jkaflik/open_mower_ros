@@ -5,7 +5,7 @@ devel/
 src/CMakeLists.txt
 
 .idea/
-
+.env
 logs/
 bin/
 lib/

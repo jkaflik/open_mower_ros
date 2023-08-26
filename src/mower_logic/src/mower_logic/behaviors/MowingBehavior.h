@@ -41,6 +41,13 @@ private:
     unsigned int currentMowingPathsProgress = 0;
 
     std::string subStateName;
+    ros::Time last_checkpoint;
+    int currentMowingPath;
+    int currentArea;
+    int currentMowingPathIndex;
+    int mowingPathIndexOffset;
+    std::string currentMowingPlanDigest;
+
 
 public:
     MowingBehavior();
@@ -80,6 +87,10 @@ public:
     void handle_action(std::string action) override;
 
     void update_actions();
+
+    void checkpoint();
+
+    bool restore_checkpoint();
 
     static geometry_msgs::Polygon densePolygonPointsForSlicer(const geometry_msgs::Polygon &polygon, float pointsDensity);
 };
