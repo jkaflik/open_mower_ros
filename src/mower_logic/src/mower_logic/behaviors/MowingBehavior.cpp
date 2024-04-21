@@ -91,6 +91,7 @@ Behavior *MowingBehavior::execute() {
 
 void MowingBehavior::enter() {
     skip_area = false;
+    skip_path = false;
     paused = aborted = false;
 
     for(auto& a : actions) {
@@ -194,6 +195,7 @@ bool MowingBehavior::create_mowing_plan(int area_index) {
     slic3r_coverage_planner::PlanPath pathSrv;
     pathSrv.request.angle = angle;
     pathSrv.request.outline_count = config.outline_count;
+    pathSrv.request.outline_overlap_count = config.outline_overlap_count;
     pathSrv.request.outline = densePolygonPointsForSlicer(mapSrv.response.area.area, AREA_POINTS_DENSITY);
     pathSrv.request.holes = mapSrv.response.area.obstacles;
     pathSrv.request.fill_type = slic3r_coverage_planner::PlanPathRequest::FILL_LINEAR;
@@ -398,6 +400,11 @@ bool MowingBehavior::execute_mowing_plan() {
                         skip_area = false;
                         return true;
                     }
+                    if(skip_path) {
+                        currentMowingPaths.erase(currentMowingPaths.begin());
+                        skip_path=false;
+                        return false;
+                    }
                     if (aborted) {
                         ROS_INFO_STREAM("MowingBehavior: (FIRST POINT) ABORT was requested - stopping path execution.");
                         mbfClientExePath->cancelAllGoals();
@@ -502,6 +509,12 @@ bool MowingBehavior::execute_mowing_plan() {
                         skip_area = false;
                         subStateName = "skipping";
                         return true;
+                    }
+                    if(skip_path) {
+                        currentMowingPaths.erase(currentMowingPaths.begin());
+                        skip_path=false;
+                        subStateName = "skipping";
+                        return false;
                     }
                     if (aborted) {
                         ROS_INFO_STREAM("MowingBehavior: (MOW) ABORT was requested - stopping path execution.");
@@ -654,11 +667,17 @@ MowingBehavior::MowingBehavior() {
     skip_area_action.enabled = false;
     skip_area_action.action_name = "Skip Area";
 
+    mower_logic::Action skip_path_action;
+    skip_path_action.action_id = "skip_path";
+    skip_path_action.enabled = false;
+    skip_path_action.action_name = "Skip Path";
+
     actions.clear();
     actions.push_back(pause_action);
     actions.push_back(continue_action);
     actions.push_back(abort_mowing_action);
     actions.push_back(skip_area_action);
+    actions.push_back(skip_path_action);
 }
 
 void MowingBehavior::handle_action(std::string action) {
@@ -680,6 +699,9 @@ void MowingBehavior::handle_action(std::string action) {
     } else if(action == "mower_logic:mowing/skip_area") {
         ROS_INFO_STREAM("got skip_area command");
         skip_area = true;
+    } else if(action == "mower_logic:mowing/skip_path") {
+        ROS_INFO_STREAM("got skip_path command");
+        skip_path = true;
     }
     update_actions();
 }
