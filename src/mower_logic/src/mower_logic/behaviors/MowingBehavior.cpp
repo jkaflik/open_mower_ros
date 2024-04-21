@@ -644,7 +644,6 @@ uint8_t MowingBehavior::get_state() {
 }
 
 MowingBehavior::MowingBehavior() {
-    mower_logic::Action pause_action;
     last_checkpoint = ros::Time(0.0);
 
     mower_logic::Action pause_action;
