@@ -539,7 +539,7 @@ bool MowingBehavior::execute_mowing_plan() {
                         if (currentIndex != -1) {
                             currentMowingPathIndex = currentIndex;
                         }
-                        ROS_INFO_STREAM_THROTTLE(5, "MowingBehavior: (MOW) Progress: " << currentMowingPathIndex() << "/" << path.path.poses.size());
+                        ROS_INFO_STREAM_THROTTLE(5, "MowingBehavior: (MOW) Progress: " << currentMowingPathIndex << "/" << path.path.poses.size());
                         if ( ros::Time::now() - last_checkpoint > ros::Duration(30.0) ) checkpoint();
                     }
                 } else {
