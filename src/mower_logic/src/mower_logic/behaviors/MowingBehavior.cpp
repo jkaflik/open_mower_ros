@@ -647,7 +647,7 @@ MowingBehavior::MowingBehavior() {
     mower_logic::Action pause_action;
     last_checkpoint = ros::Time(0.0);
 
-    xbot_msgs::ActionInfo pause_action;
+    mower_logic::Action pause_action;
     pause_action.action_id = "pause";
     pause_action.enabled = false;
     pause_action.action_name = "Pause Mowing";
